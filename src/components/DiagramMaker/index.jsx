@@ -2,23 +2,21 @@ import React from "react";
 import { styled } from "@mui/system";
 
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
 import FixedSVG from "../FixedSVG";
 import Node from "./Node";
 import Line from "./Line";
 import NodeButton from "./NodeButton";
 
-import { ssSvg, Side, getSvgInfo, DiagramInfo, bezierDist } from "./position";
-
-const width = 5;
-const height = 4;
-
-const svgInfo = getSvgInfo(width, height);
+import { ssSvg, ssDisp, getSvgInfo } from "./position";
 
 // Position relative to hold children with position absolute
 const RelativeDiv = styled("div")`
   position: relative;
-  margin-top: 10px
+  margin: 10px 0;
+  ${(props) => props.width && `width: ${props.width}px;`}
+  ${(props) => props.height && `height: ${props.height}px;`}
 `;
 
 // Border around svg and shift to center node buttons
@@ -29,6 +27,7 @@ const SVG = styled(FixedSVG)`
   left: -3px;
 `;
 
+// Dot helper
 const toggleDot = (d, x, y) => {
   const found = d.findIndex((e) => e.x === x && e.y === y);
 
@@ -41,6 +40,7 @@ const toggleDot = (d, x, y) => {
   return ret;
 };
 
+// Line helper
 const sameLine = (l1, l2) =>
   (l1.x1 === l2.x1 && l1.y1 === l2.y1 && l1.x2 === l2.x2 && l1.y2 === l2.y2) ||
   (l1.x1 === l2.x2 && l1.y1 === l2.y2 && l1.x2 === l2.x1 && l1.y2 === l2.y1);
@@ -48,10 +48,19 @@ const addLine = (l, x1, y1, x2, y2) => [...l, { x1, y1, x2, y2 }];
 const removeLine = (l, x1, y1, x2, y2) =>
   l.filter((e) => !sameLine(e, { x1, y1, x2, y2 }));
 
-function DiagramMaker({ mode = "line", showMode }) {
+function DiagramMaker({
+  width = 5,
+  height = 5,
+  dispScale = 120,
+  mode = "line",
+  showMode,
+  onChange,
+}) {
   const [selected, setSelected] = React.useState(null);
-  const [lines, setLines] = React.useState([]);
   const [dots, setDots] = React.useState([]);
+  const [lines, setLines] = React.useState([]);
+
+  const svgInfo = getSvgInfo(width, height, dispScale);
 
   const clickNode = (x, y) => {
     if (mode === "dot") {
@@ -68,10 +77,14 @@ function DiagramMaker({ mode = "line", showMode }) {
     }
   };
 
+  React.useEffect(() => {
+    onChange(dots, lines);
+  }, [dots, lines, onChange]);
+
   return (
     <div>
       {showMode && `Mode: ${mode}`}
-      <RelativeDiv>
+      <RelativeDiv width={width * dispScale} height={height * dispScale}>
         <SVG
           width={`${svgInfo.width}px`}
           height={`${svgInfo.height}px`}
@@ -125,7 +138,7 @@ function DiagramMaker({ mode = "line", showMode }) {
             {[...Array(width)].map((_, x) => (
               <NodeButton
                 key={`Node ${x} ${y}`}
-                radius={20}
+                radius={dispScale / 5}
                 left={svgInfo.posDisp(x)}
                 top={svgInfo.posDisp(y)}
                 onClick={(e) => clickNode(x, y)}
@@ -135,6 +148,19 @@ function DiagramMaker({ mode = "line", showMode }) {
           </React.Fragment>
         ))}
       </RelativeDiv>
+
+      <Button
+        variant="outlined"
+        size="small"
+        disableElevation
+        onClick={() => {
+          setLines([]);
+          setDots([]);
+        }}
+        sx={{ marginBottom: "5px" }}
+      >
+        Reset
+      </Button>
     </div>
   );
 }
