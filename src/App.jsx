@@ -7,6 +7,7 @@ import "./global.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 
 import Container from "./components/Container";
@@ -37,13 +38,35 @@ const theme = createTheme({
 });
 
 function App() {
+  const [mode, setMode] = React.useState("line");
+
   return (
     <ThemeProvider theme={theme}>
       <Container maxWidth="md">
         <Typography variant="h4" gutterBottom>
           String Diagram Maker
         </Typography>
-        <DiagramMaker />
+
+        <div>
+          <Button
+            variant={mode === "line" ? "contained" : "outlined"}
+            size="small"
+            disableElevation
+            onClick={() => setMode("line")}
+          >
+            Line
+          </Button>
+          <Button
+            variant={mode === "dot" ? "contained" : "outlined"}
+            size="small"
+            disableElevation
+            onClick={() => setMode("dot")}
+          >
+            Dot
+          </Button>
+        </div>
+
+        <DiagramMaker mode={mode} />
       </Container>
     </ThemeProvider>
   );
