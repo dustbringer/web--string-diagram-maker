@@ -159,11 +159,9 @@ function App() {
               placeholder="Empty"
               InputProps={{
                 readOnly: true,
-                classes: {
-                  input: {
-                    fontSize: "0.8em",
-                    whiteSpace: "pre",
-                  },
+                sx: {
+                  fontSize: "0.8em",
+                  whiteSpace: "pre",
                 },
               }}
               defaultValue={tikz}
