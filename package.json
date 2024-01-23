@@ -1,6 +1,6 @@
 {
   "name": "string-diagram-maker",
-  "homepage": "https://dustbringer.io/string-diagram-maker",
+  "homepage": "https://dustbringer.io/web--string-diagram-maker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
